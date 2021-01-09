@@ -1,0 +1,11 @@
+.robinhood-header{
+  color: #1b8f3a;
+  text-transform: uppercase;
+}
+.webull-header{
+  color: #2a63e8;
+  text-transform: uppercase;
+}
+.inactive-header{
+  color: red;
+}

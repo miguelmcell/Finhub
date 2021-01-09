@@ -1,0 +1,10 @@
+{
+   "access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJleHAiOjE2MDE1ODQzMDcsInRva2VuIjoicnF0cU5ESVNBallsc29nNWM4RHI4clV3aTc4amNjIiwidXNlcl9pZCI6IjAxYzMyYzgxLThhZmQtNGU1MC04NTUwLTcwNWMxOTZlYmUwNCIsImRldmljZV9oYXNoIjoiMzRjODU3ODc3ZDY1ODdkMDU4NDcxZTQxZDg0NmY1OTUiLCJzY29wZSI6ImludGVybmFsIiwiZGN0IjoxNjAxMTc4OTY4LCJ1c2VyX29yaWdpbiI6IlVTIiwib3B0aW9ucyI6dHJ1ZSwibGV2ZWwyX2FjY2VzcyI6ZmFsc2V9.jBvb6eVIYf-O4MkB052FYsCz6GS6W7eBURVQoczPmxmyzFJuS03VdMC4P4gr9oRVJyHjgeT8qU4o6UWBTPP0KOPgzv7tXt5R1GYkJgY_gMbrVEFhvDSgnNbSQf7G-KjcViF5yjz4hfNVkngBsRBCnxKwaSFOXBc_rDV4u5VdHsj8QFzpVwFICgm1zcnke-VbIrbxjf3blKgFxKZ2mUIOpnPCEjt8aJzZWwugJOj1pO4uHicFw7x8HKD8zPro1NC89zCwtZ-SK5XcG-MX9QFW6oNfaBbsmo1hm1pUG_ztpDakcOIHg7nkiFeNx-tKvwBPSnXTBkpNOSn_p24YUpchRQ",
+   "expires_in":405339,
+   "token_type":"Bearer",
+   "scope":"internal",
+   "refresh_token":"pRAFixU9pQHg61WIGvvaUiifTK104U",
+   "mfa_code":"304456",
+   "backup_code":"None",
+   "detail":"logged in with brand new authentication code."
+}

@@ -1,0 +1,3 @@
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_NAME = 'FinHubBroker-WebSession'
+CORS_HEADERS = 'Content-Type'

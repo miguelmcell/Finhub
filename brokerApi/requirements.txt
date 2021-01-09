@@ -1,0 +1,5 @@
+Flask~=1.1.2
+Werkzeug~=1.0.1
+flask_cors~=3.0.9
+webull~=0.3.0
+git+git://github.com/miguelmcell/robin_stocks.git#egg=robin-stocks

@@ -1,0 +1,29 @@
+.login-container {
+  margin-top: 20px;
+}
+
+.login-username-row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.login-password-row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.login-button-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+.login-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.error-message {
+  color: red;
+}

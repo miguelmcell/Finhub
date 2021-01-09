@@ -1,0 +1,18 @@
+.registration-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.registration-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.registration-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}

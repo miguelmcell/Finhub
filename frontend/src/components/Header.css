@@ -1,0 +1,16 @@
+.logo {
+  position: absolute;
+  color: #9c6eff;
+  font-family: Impact, Charcoal, sans-serif;
+  font-size: 30px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  top: 10px;
+}
+
+@media (max-width: 768px) {
+  .nav-header-items {
+    padding-bottom: 8px;
+  }
+}

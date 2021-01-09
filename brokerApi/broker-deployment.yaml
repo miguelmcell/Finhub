@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker-api
+  template:
+    metadata:
+      labels:
+        app: broker-api
+    spec:
+      containers:
+       - name: broker-api
+         image: cloud.canister.io:5000/miguelmcell/finhub-broker-api
+         ports:
+         - containerPort: 5000
+         env:
+          - name: "SERVERPORT"
+            value: "5000"
+      imagePullSecrets:
+      - name: regcred

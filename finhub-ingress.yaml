@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: my-finhub-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: finhub-ip
+    ingress.gcp.kubernetes.io/pre-shared-cert: "finhub-certificate"
+spec:
+  rules:
+  - host: finhub.network
+    http:
+      paths:
+      - backend:
+          serviceName: my-finhub-frontend-service
+          servicePort: frontend-port

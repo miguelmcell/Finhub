@@ -1,0 +1,95 @@
+.second-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.daily-loser-row {
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  font-size: 20px;
+}
+
+.loser-card-row {
+  position: relative;
+  margin-top: 60px;
+  margin-left: 350px;
+}
+.loser-one {
+  transform: rotate(210deg) translate(-11px, 55px);
+  /* right: 0; */
+  right: 290px;
+}
+.loser-two {
+  transform: rotate(270deg);
+  right: 135px;
+}
+.loser-three {
+  transform: rotate(-8deg) translate(-60px,-25px);
+  right:-25px;
+}
+
+@media (min-width: 200px) {
+  .loser-one {
+    transform: rotate(5deg) translate(18px, -18px);
+    /* right: 0; */
+    right: 261px;
+  }
+  .loser-two {
+    transform: rotate(-29deg) translate(10px,-10px);
+    right: 135px;
+  }
+  .loser-three {
+    transform: rotate(-8deg) translate(-46px,-25px);
+    right:-12px;
+  }
+}
+@media (min-width: 365px) {
+  .loser-one {
+    transform: rotate(5deg) translate(18px, -18px);
+    /* right: 0; */
+    right: 275px;
+  }
+  .loser-two {
+    transform: rotate(-26deg) translate(10px,-10px);
+    right: 135px;
+  }
+  .loser-three {
+    transform: rotate(-8deg) translate(-46px,-25px);
+    right:-25px;
+  }
+}
+@media (min-width: 600px) {
+  .loser-one {
+    transform: rotate(212deg) translate(-11px, 55px);
+    /* right: 0; */
+    right: 300px;
+    margin-top: 10px;
+  }
+  .loser-two {
+    transform: rotate(270deg);
+    right: 135px;
+    margin-top: 22px;
+  }
+  .loser-three {
+    transform: rotate(-8deg) translate(-60px,-25px);
+    right:-25px;
+  }
+}
+@media (min-width: 1000px) {
+  .loser-one {
+    transform: rotate(212deg) translate(-11px, 55px);
+    /* right: 0; */
+    right: 305px;
+    margin-top: 10px;
+  }
+  .loser-two {
+    transform: rotate(270deg);
+    right: 135px;
+    margin-top: 28px;
+  }
+  .loser-three {
+    transform: rotate(-8deg) translate(-60px,-25px);
+    right:-29px;
+  }
+}

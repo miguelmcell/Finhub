@@ -1,0 +1,112 @@
+.error-message {
+  color: white;
+  text-align: center;
+}
+.account-button{
+  margin-left: 5px;
+  margin-right: 5px;
+
+}
+
+.account-setting-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  font-size: 20px;
+}
+
+.account-form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: white;
+}
+.robinhood-form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: white;
+}
+
+.account-form-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.account-form {
+  /* background: red; */
+  /* width: 60%; */
+  font-size: 18px;
+}
+.account-input {
+  /* background: red; */
+  /* width: 60%; */
+  font-size: 18px;
+  margin: auto;
+}
+
+.robinhood-input {
+  /* background: red; */
+  /* width: 60%; */
+  font-size: 13px;
+  margin: auto;
+}
+
+.robinhood-buttons-no-account {
+  margin-top: 1%;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.robinhood-buttons-account {
+  display: flex;
+  flex-direction: row;
+  margin-top: 1%;
+  margin-bottom: 20px;
+  width: 95vw;
+  justify-content: center;
+}
+@media (max-width: 374px) {
+  .account-form-row {
+    margin-bottom: 2%;
+  }
+  .account-form {
+    font-size: 15px;
+    width: 200px;
+  }
+  .account-input {
+    font-size: 18px;
+    width: 200px;
+  }
+
+  .robinhood-input {
+    font-size: 18px;
+    width: 200px;
+  }
+}
+@media (min-width: 425px) {
+  .robinhood-input {
+    font-size: 14px;
+  }
+}
+@media (min-width: 465px) {
+  .robinhood-input {
+    font-size: 14px;
+  }
+}
+@media (min-width: 768px) {
+  .account-form {
+    font-size: 18px;
+  }
+  .account-input {
+    font-size: 18px;
+  }
+  .robinhood-input {
+    font-size: 18px;
+  }
+}
+@media (min-width: 1000px) {
+
+}

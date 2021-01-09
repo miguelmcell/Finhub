@@ -1,0 +1,70 @@
+/* .item must be first */
+.item {
+  align-items: center;
+  color: #FFF;
+  cursor: pointer;
+  display: flex;
+  font-size: 14px;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+
+.disabled-page {
+  color: #1c1c1c;
+}
+
+.page-active {
+  border: solid 1px #3d7ab3;
+  border-radius: 40px;
+  color: #3d7ab3;
+}
+
+.break-me {
+}
+
+.next {
+  border-left: solid 1px #808e9b;
+  font-size: 4px;
+  height: 40px;
+  position: absolute;
+  right: 0;
+  width: 100px;
+}
+
+.pagination {
+  align-items: center;
+  background-color: #32CD32;
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+  justify-content: center;
+  list-style-type: none;
+  position: relative;
+  width: 500px;
+}
+
+.pagination-page {
+  font-weight: 700;
+}
+
+.previous {
+  border-right: solid 1px #808e9b;
+  font-size: 4px;
+  height: 40px;
+  left: 0;
+  position: absolute;
+  width: 100px;
+}
+.pagination-friends {
+  width: 90vw;
+  max-width: 800px;
+}
+
+.my-friends-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
