@@ -9,4 +9,5 @@ Social way to track market performance with several brokers
 ## Follow friends for easier navigation
 ![Friends](https://user-images.githubusercontent.com/9044417/104108271-c7707d00-5288-11eb-8bd7-68a38367a40b.png)
 ## Simple configuration page for synchronizing brokers with finhub account
+### Currently supports: Robinhood, Webull
 ![Config](https://user-images.githubusercontent.com/9044417/104108267-c6d7e680-5288-11eb-83da-d510be3618d5.png)
