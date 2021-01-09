@@ -1,2 +1,2 @@
 # Finhub
-Track Performance Through Several Brokers
+Social way to track market performance with several brokers
