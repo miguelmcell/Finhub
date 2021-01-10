@@ -7,13 +7,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DiscordAccountService {
     @Autowired
     FinhubAccountRepository finhubAccountRepository;
+
+    public ArrayList<String> getActiveUsersInGuild (String guildId) {
+        return finhubAccountRepository.findAll().stream()
+                .filter(finhubAccount -> finhubAccount.getDiscordServerIds().stream()
+                .anyMatch(serverId -> serverId.equals(guildId)))
+                .map(FinhubAccount::getDiscordId)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
 
     public ResponseEntity register(FinhubSignUpForm signUpForm) {
         /*

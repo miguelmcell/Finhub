@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FinhubAccountRepository extends MongoRepository<FinhubAccount, String> {
     FinhubAccount findByDiscordId(String discordId);
+
 }
