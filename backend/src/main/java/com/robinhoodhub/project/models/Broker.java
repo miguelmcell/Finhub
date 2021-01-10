@@ -11,6 +11,7 @@ public class Broker {
     /**
      * Account Information
      */
+    String name;
     String status; // inactive, session expired, active
     String brokerUsername;
     String brokerAccessToken;

@@ -34,4 +34,15 @@ public class HubDiscordController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(accountService.getActiveUsersInGuild(guildId));
     }
+    @RequestMapping(value="/discord/getUser", method = RequestMethod.GET)
+    public ResponseEntity getUser(
+            @RequestHeader("discordId") String discordId
+    ) {
+        // Verify headers exist
+        if(discordId==null)
+            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(accountService.getUser(discordId));
+    }
 }

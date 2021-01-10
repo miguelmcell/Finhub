@@ -71,4 +71,16 @@ public class DiscordAccountService {
                 .anyMatch(id -> id.equals(signUpForm.getGuildId()));
         return isServerAlreadyRegistered ? 2 : 1;
     }
+    public int doesAccountExist(String discordId) {
+        /*
+          0 - account does not exist
+          1 - account exists
+         */
+        FinhubAccount finhubAccount = finhubAccountRepository.findByDiscordId(discordId);
+        return finhubAccount == null ? 0 : 1;
+    }
+
+    public FinhubAccount getUser(String discordId) {
+        return finhubAccountRepository.findByDiscordId(discordId);
+    }
 }
