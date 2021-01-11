@@ -2,12 +2,14 @@ package com.robinhoodhub.project.services;
 
 import com.robinhoodhub.project.models.*;
 import com.robinhoodhub.project.repositories.FinhubAccountRepository;
+import com.robinhoodhub.project.repositories.WebullServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
 public class DiscordAccountService {
     @Autowired
     FinhubAccountRepository finhubAccountRepository;
+    @Autowired
+    WebullServiceRepository webullServiceRepository;
 
     public ArrayList<String> getActiveUsersInGuild (String guildId) {
         return finhubAccountRepository.findAll().stream()
@@ -23,6 +27,27 @@ public class DiscordAccountService {
                 .anyMatch(serverId -> serverId.equals(guildId)))
                 .map(FinhubAccount::getDiscordId)
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+    public ResponseEntity sendWebullMfa (String discordId) {
+        FinhubAccount account = getUser(discordId);
+        if (account==null) {
+            return ResponseEntity.badRequest().body("finhub account not found");
+        }
+        Broker webullAccount = account.getBrokers().stream()
+                .filter(broker -> broker.getName().equals("webull"))
+                .findFirst()
+                .orElse(null);
+
+        if (webullAccount == null) {
+            return ResponseEntity.badRequest().body("webull account does not exist");
+        } else {
+            try {
+                webullServiceRepository.sendMfaToken(webullAccount.getBrokerUsername());
+            } catch (Exception e) {
+                return ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            return ResponseEntity.ok(HttpStatus.OK);
+        }
     }
 
     public ResponseEntity addWebullAccount (DiscordModifyBrokerForm requestForm) {

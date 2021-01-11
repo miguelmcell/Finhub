@@ -6,6 +6,7 @@ import com.robinhoodhub.project.models.SignUpForm;
 import com.robinhoodhub.project.services.AccountService;
 import com.robinhoodhub.project.services.DiscordAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,19 @@ public class HubDiscordController {
         if(requestForm.getDiscordId()==null || requestForm.getEmail()==null)
             return ResponseEntity.badRequest().build();
         return accountService.addWebullAccount(requestForm);
+    }
+    @RequestMapping(value="/discord/webull/sendMfa", method = RequestMethod.POST)
+    public ResponseEntity sendWebullMfa(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        // Verify headers exist
+        if(requestForm.getDiscordId()==null)
+            return ResponseEntity.badRequest().build();
+        ResponseEntity status = accountService.sendWebullMfa(requestForm.getDiscordId());
+        if(status.getStatusCode().value()!=200) {
+            return status;
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @RequestMapping(value="/getActiveUsersInServer", method = RequestMethod.GET)
