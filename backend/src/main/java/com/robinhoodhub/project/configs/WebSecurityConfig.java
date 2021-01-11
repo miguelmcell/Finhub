@@ -72,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         } else {
             httpSecurity.requiresChannel().anyRequest().requiresSecure().and().cors().and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                     // dont authenticate this particular request
-                    .authorizeRequests().antMatchers("/authenticate", "/signUp","/getProfile/*","/search/*","/testStatus","/testRobinhoodStatus","/testWebullStatus", "/discord/signUp", "/getActiveUsersInServer", "/discord/getUser").permitAll().
+                    .authorizeRequests().antMatchers("/authenticate", "/signUp","/getProfile/*","/search/*","/testStatus","/testRobinhoodStatus","/testWebullStatus", "/discord/signUp", "/getActiveUsersInServer", "/discord/getUser", "/discord/webull/addAccount").permitAll().
                     // all other requests need to be authenticated
                             anyRequest().authenticated().and().
                     // make sure we use stateless session; session won't be used to

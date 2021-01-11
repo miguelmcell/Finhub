@@ -25,6 +25,27 @@ public class DiscordAccountService {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public ResponseEntity addWebullAccount (DiscordModifyBrokerForm requestForm) {
+        FinhubAccount account = getUser(requestForm.getDiscordId());
+        if (account==null) {
+            return ResponseEntity.badRequest().body("finhub account not found");
+        } else if (account.getBrokers().stream()
+                .anyMatch(broker -> broker.getName().equals("webull"))) {
+            return ResponseEntity.badRequest().body("webull account already exists");
+        } else {
+            ArrayList<Broker> curBrokers = account.getBrokers();
+            Broker newWebullAccount = Broker.builder()
+                    .name("webull")
+                    .status("inactive")
+                    .brokerUsername(requestForm.getEmail())
+                    .build();
+            curBrokers.add(newWebullAccount);
+            account.setBrokers(curBrokers);
+            finhubAccountRepository.save(account);
+            return ResponseEntity.ok().build();
+        }
+    }
+
     public ResponseEntity register(FinhubSignUpForm signUpForm) {
         /*
          * If new account, create new finhub account and save

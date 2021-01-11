@@ -1,5 +1,6 @@
 package com.robinhoodhub.project.controllers;
 
+import com.robinhoodhub.project.models.DiscordModifyBrokerForm;
 import com.robinhoodhub.project.models.FinhubSignUpForm;
 import com.robinhoodhub.project.models.SignUpForm;
 import com.robinhoodhub.project.services.AccountService;
@@ -23,6 +24,16 @@ public class HubDiscordController {
             return ResponseEntity.badRequest().build();
         return accountService.register(signUpForm);
     }
+    @RequestMapping(value="/discord/webull/addAccount", method = RequestMethod.POST)
+    public ResponseEntity addWebullAccount(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        // Verify headers exist
+        if(requestForm.getDiscordId()==null || requestForm.getEmail()==null)
+            return ResponseEntity.badRequest().build();
+        return accountService.addWebullAccount(requestForm);
+    }
+
     @RequestMapping(value="/getActiveUsersInServer", method = RequestMethod.GET)
     public ResponseEntity getActiveUsersInServer(
             @RequestHeader("guildId") String guildId
