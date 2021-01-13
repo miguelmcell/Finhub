@@ -19,7 +19,7 @@ public class WebullServiceRepository {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://my-finhub-broker-service:5003/webullRepository/login"))
+                .uri(URI.create("http://127.0.0.1:5000/webullRepository/login"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .header("content-type", "application/json")
                 .build();
@@ -34,7 +34,7 @@ public class WebullServiceRepository {
     getPositions(String accessToken, String account_id) throws Exception{
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://my-finhub-broker-service:5003/webullRepository/getPositions"))
+                .uri(URI.create("http://127.0.0.1:5000/webullRepository/getPositions"))
                 .headers("content-type", "application/json","access_token", accessToken, "account_id", account_id)
                 .build();
 
@@ -61,7 +61,7 @@ public class WebullServiceRepository {
     getPerformances(String accessToken, String account_id) throws Exception{
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://my-finhub-broker-service:5003/webullRepository/getPerformances"))
+                .uri(URI.create("http://127.0.0.1:5000/webullRepository/getPerformances"))
                 .headers("content-type", "application/json","access_token", accessToken, "account_id", account_id)
                 .build();
 
@@ -75,7 +75,7 @@ public class WebullServiceRepository {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://my-finhub-broker-service:5003/webullRepository/status"))
+                    .uri(URI.create("http://127.0.0.1:5000/webullRepository/status"))
                     .build();
 
             HttpResponse<String> response = client.send(request,

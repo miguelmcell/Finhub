@@ -2,8 +2,7 @@ package com.robinhoodhub.project.controllers;
 
 import com.robinhoodhub.project.models.DiscordModifyBrokerForm;
 import com.robinhoodhub.project.models.FinhubSignUpForm;
-import com.robinhoodhub.project.models.SignUpForm;
-import com.robinhoodhub.project.services.AccountService;
+import com.robinhoodhub.project.models.WebullSyncForm;
 import com.robinhoodhub.project.services.DiscordAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,6 +45,25 @@ public class HubDiscordController {
             return status;
         }
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+    @PostMapping(value="/discord/webull/syncWebull")
+    public ResponseEntity syncWebull(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        if(requestForm.getDiscordId()==null || requestForm.getPassword()==null || requestForm.getMfaCode()==null) {
+            return ResponseEntity.badRequest().build();
+        }
+        WebullSyncForm syncForm = WebullSyncForm.builder()
+                .email(requestForm.getEmail())
+                .password(requestForm.getPassword())
+                .mfa(requestForm.getMfaCode())
+                .build();
+        ResponseEntity syncStatus = accountService.syncWebull(requestForm.getDiscordId(), syncForm);
+        if(syncStatus.getStatusCode().value()!=200) {
+            return syncStatus;
+        }
+        // populate performance and stock positions
+        return accountService.webullUpdatePerformanceHoldings(requestForm.getDiscordId());
     }
 
     @RequestMapping(value="/getActiveUsersInServer", method = RequestMethod.GET)
