@@ -20,7 +20,7 @@ public class RobinhoodServiceRepository {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://my-finhub-broker-service:5003/robinhoodRepository/login"))
+                .uri(URI.create("http://127.0.0.1:5000/robinhoodRepository/login"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .header("content-type", "application/json")
                 .build();
@@ -37,7 +37,7 @@ public class RobinhoodServiceRepository {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://my-finhub-broker-service:5003/robinhoodRepository/getPositions"))
+                .uri(URI.create("http://127.0.0.1:5000/robinhoodRepository/getPositions"))
                 .headers("content-type", "application/json","Authorization", "Bearer " + accessToken)
                 .build();
 
@@ -52,7 +52,7 @@ public class RobinhoodServiceRepository {
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://my-finhub-broker-service:5003/robinhoodRepository/getPerformances"))
+                .uri(URI.create("http://127.0.0.1:5000/robinhoodRepository/getPerformances"))
                 .headers("content-type", "application/json","Authorization", "Bearer " + accessToken)
                 .build();
 
@@ -66,7 +66,7 @@ public class RobinhoodServiceRepository {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("http://my-finhub-broker-service:5003/robinhoodRepository/status"))
+                    .uri(URI.create("http://127.0.0.1:5000/robinhoodRepository/status"))
                     .build();
 
             HttpResponse<String> response = client.send(request,

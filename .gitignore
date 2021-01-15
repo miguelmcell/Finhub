@@ -22,6 +22,8 @@ __pycache__/
 
 *.sublime*
 
+brokerApi/venv
+
 psd
 thumb
 sketch
