@@ -6,7 +6,6 @@ import com.robinhoodhub.project.repositories.HubAccountRepository;
 import com.robinhoodhub.project.repositories.RobinhoodServiceRepository;
 import com.robinhoodhub.project.repositories.WebullServiceRepository;
 import com.robinhoodhub.project.utils.AESUtil;
-import com.robinhoodhub.project.utils.ProfanityFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +31,6 @@ public class AccountService {
     @Autowired
     RobinhoodServiceRepository robinhoodServiceRepository;
     @Autowired
-    ProfanityFilter profanityFilter;
-    @Autowired
     WebullServiceRepository webullServiceRepository;
     AESUtil aesUtil = new AESUtil();
     @Value("${aes.s}")
@@ -55,9 +52,6 @@ public class AccountService {
         }
         if (signUpForm.getUsername().length()<5){
             return ResponseEntity.badRequest().body("Username must be longer than 4 characters");
-        }
-        if(profanityFilter.isProfanity(signUpForm.getUsername())){
-            return ResponseEntity.badRequest().body("Profanity detected in username");
         }
         if(signUpForm.getUsername().contains(" ")){
             return ResponseEntity.badRequest().body("Username cannot contain spaces");

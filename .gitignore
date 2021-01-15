@@ -318,3 +318,5 @@ Temporary Items
 .apdisk
 
 # End of https://www.toptal.com/developers/gitignore/api/react,reactnative
+.vscode/launch.json
+.vscode/settings.json
