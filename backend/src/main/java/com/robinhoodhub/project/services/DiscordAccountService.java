@@ -93,11 +93,46 @@ public class DiscordAccountService {
         }
     }
 
-    public ResponseEntity syncWebull(String discordId, WebullSyncForm syncForm) {
+    public ResponseEntity syncRobinhood(String discordId, DiscordModifyBrokerForm syncForm) {
         try {
             HttpResponse response = webullServiceRepository.getAccessToken(syncForm);
             if(response.statusCode()!=200)
                 return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("webullRepositoryNon2xx");
+            /*
+            Map to response object and store in database
+             */
+            ObjectMapper objectMapper = new ObjectMapper();
+            WebullSyncResponse webullSyncResponse = objectMapper.readValue(response.body().toString(), WebullSyncResponse.class);
+
+            FinhubAccount finhubAccount = finhubAccountRepository.findByDiscordId(discordId);
+            Optional<Broker> webullBrokerOptional = finhubAccount.getBrokers().stream().
+                    filter(broker -> broker.getName().equals("webull"))
+                    .findFirst();
+            Broker webullBroker = webullBrokerOptional.orElse(null);
+            if (webullBroker==null) {
+                return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("noWebullAccount");
+            }
+            webullBroker.setBrokerAccessToken(aesUtil.encrypt(webullSyncResponse.getAccess_token(), s));
+            webullBroker.setBrokerAccountId(webullSyncResponse.getAccount_id());
+            webullBroker.setBrokerRefreshToken(webullSyncResponse.getRefresh_token());
+            webullBroker.setBrokerTokenExpiration(webullSyncResponse.getExpirationTime());
+            webullBroker.setStatus("active");
+            finhubAccountRepository.save(finhubAccount);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    public ResponseEntity syncWebull(String discordId, WebullSyncForm syncForm) {
+        try {
+            HttpResponse response = webullServiceRepository.getAccessToken(syncForm);
+            if(response.statusCode()!=200) {
+                if (response.body().toString().contains("Incorrect password or username.")) {
+                    return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.body());
+                }
+                return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("failed to syncWebull, MFA token might be invalid");
+            }
             /*
             Map to response object and store in database
              */
@@ -268,7 +303,12 @@ public class DiscordAccountService {
                 .build();
             ResponseEntity syncResponse = syncRobinhood(requestForm.getDiscordId(), robinhoodSyncForm);
             if (!syncResponse.getStatusCode().equals(HttpStatus.OK)) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to sync robinhood account to finhub account");
+                // if something goes wrong then delete broker that was trying to be added
+                ArrayList<Broker>  brokersRobinhoodExcluded = account.getBrokers().stream().
+                    filter(broker -> !broker.getName().equals("robinhood")).collect(Collectors.toCollection(ArrayList::new));
+                account.setBrokers(brokersRobinhoodExcluded);
+                finhubAccountRepository.save(account);
+                return syncResponse;
             }
             // Populate robinhood metrics
             return robinhoodUpdatePerformanceHoldings(requestForm.getDiscordId());
@@ -279,8 +319,20 @@ public class DiscordAccountService {
     public ResponseEntity syncRobinhood(String discordId, RobinhoodSyncForm syncForm) {
         try {
             HttpResponse response = robinhoodServiceRepository.getAccessToken(syncForm);
-            if(response.statusCode()!=200)
+            if(response.statusCode()==400) {
+                if (response.body().equals("Invalid code")) {
+                    System.out.println("syncRobinhood: Invalid code");
+                    return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Robinhood MFA code is invalid");
+                } else if (response.body().equals("Unable to log in with provided credentials")) {
+                    System.out.println("syncRobinhood: Unable to log in with provided credentials");
+                    return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to log in with provided credentials");
+                }
+                
+            }
+            else if(response.statusCode()!=200) {
                 return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("syncRobinhood: Failed to get access token from robinhoodServiceRepository");
+            }
+            System.out.println(response.statusCode());
             /*
             Map to response object and store in database
              */

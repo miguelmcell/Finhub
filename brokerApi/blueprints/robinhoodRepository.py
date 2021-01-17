@@ -1,5 +1,6 @@
 import functools
 import datetime
+from os import error
 import robin_stocks as robinhood
 import calendar
 import time
@@ -26,10 +27,17 @@ def login():
         return 'Invalid Request', 400
 
     if 'mfa_code' in request.json:
-        login = robinhood.login(request.json['username'],
+        try:
+            login = robinhood.login(request.json['username'],
                                 request.json['password'],
                                 mfa_code=request.json['mfa_code'],
                                 store_session=False)
+        except Exception as e:
+            error_message = str(e)
+            if 'Please enter a valid code.' in error_message:
+                return 'Invalid code', 400
+            elif 'Unable to log in with provided credentials' in error_message:
+                return 'Unable to log in with provided credentials', 400
     else:
         login = robinhood.login(request.json['username'],
                                 request.json['password'],

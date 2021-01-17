@@ -25,8 +25,12 @@ def login():
     if not ('email' in request.json and 'password' in request.json and 'mfa' in request.json):
         return 'Invalid Request', 400
     wb = webull()
-    print('login creds:', request.json['email'], request.json['password'])
-    login_response = wb.login(request.json['email'], request.json['password'], 'finhub', request.json['mfa'])
+    try:
+        login_response = wb.login(request.json['email'], request.json['password'], 'finhub', request.json['mfa'])
+    except Exception as e:
+        return 'exception while logging in', 500
+    if 'msg' in login_response and 'Incorrect password or username.' in login_response['msg']:
+        return login_response['msg'], 400
     print('login_response:', login_response)
     account_id = wb.get_account_id()
     response = {'access_token': login_response['accessToken'], 'account_id': account_id,

@@ -2,6 +2,7 @@ package com.robinhoodhub.project.controllers;
 
 import com.robinhoodhub.project.models.DiscordModifyBrokerForm;
 import com.robinhoodhub.project.models.FinhubSignUpForm;
+import com.robinhoodhub.project.models.RobinhoodSyncForm;
 import com.robinhoodhub.project.models.WebullSyncForm;
 import com.robinhoodhub.project.services.DiscordAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,21 @@ public class HubDiscordController {
         if (requestForm.getDiscordId()==null || requestForm.getUsername()==null || requestForm.getPassword()==null || requestForm.getMfaCode()==null)
             return ResponseEntity.badRequest().build();
         return accountService.addRobinhoodAccount(requestForm);
+    }
+    @RequestMapping(value="/discord/robinhood/syncRobinhood", method = RequestMethod.POST)
+    public ResponseEntity syncRobinhoodAccount(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        // Verify headers exist
+        if (requestForm.getDiscordId()==null || requestForm.getUsername()==null || requestForm.getPassword()==null || requestForm.getMfaCode()==null)
+            return ResponseEntity.badRequest().build();
+        RobinhoodSyncForm robinhoodSyncForm = RobinhoodSyncForm.builder()
+            .username(requestForm.getUsername())
+            .password(requestForm.getPassword())
+            .mfa_code(requestForm.getMfaCode())
+            .build();
+        
+        return accountService.syncRobinhood(requestForm.getDiscordId(), robinhoodSyncForm);
     }
     @RequestMapping(value="/discord/webull/sendMfa", method = RequestMethod.POST)
     public ResponseEntity sendWebullMfa(
