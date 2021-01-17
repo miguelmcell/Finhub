@@ -33,6 +33,24 @@ public class HubDiscordController {
             return ResponseEntity.badRequest().build();
         return accountService.addWebullAccount(requestForm);
     }
+    @RequestMapping(value="/discord/robinhood/updateMetrics", method = RequestMethod.POST)
+    public ResponseEntity updateRobinhoodMetrics(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        // Verify headers exist
+        if (requestForm.getDiscordId()==null)
+            return ResponseEntity.badRequest().build();
+        return accountService.robinhoodUpdatePerformanceHoldings(requestForm.getDiscordId());
+    }
+    @RequestMapping(value="/discord/robinhood/addAccount", method = RequestMethod.POST)
+    public ResponseEntity addRobinhoodAccount(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        // Verify headers exist
+        if (requestForm.getDiscordId()==null || requestForm.getUsername()==null || requestForm.getPassword()==null || requestForm.getMfaCode()==null)
+            return ResponseEntity.badRequest().build();
+        return accountService.addRobinhoodAccount(requestForm);
+    }
     @RequestMapping(value="/discord/webull/sendMfa", method = RequestMethod.POST)
     public ResponseEntity sendWebullMfa(
             @RequestBody DiscordModifyBrokerForm requestForm
@@ -64,6 +82,28 @@ public class HubDiscordController {
         }
         // populate performance and stock positions
         return accountService.webullUpdatePerformanceHoldings(requestForm.getDiscordId());
+    }
+    @PostMapping(value="/discord/webull/updateMetrics")
+    public ResponseEntity updateWebullMetrics(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        if(requestForm.getDiscordId()==null ) {
+            return ResponseEntity.badRequest().build();
+        }
+        // update performance and stock positions
+        return accountService.webullUpdatePerformanceHoldings(requestForm.getDiscordId());
+    }
+
+    @RequestMapping(value="/discord/getGuildLeaderboard", method = RequestMethod.GET)
+    public ResponseEntity getGuildLeaderboard (
+            @RequestHeader("guildId") String guildId
+    ) {
+        // Verify headers exist
+        if(guildId==null)
+            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(accountService.getLeaderboardInGuild(guildId));
     }
 
     @RequestMapping(value="/getActiveUsersInServer", method = RequestMethod.GET)

@@ -59,20 +59,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         if(activeProfile.equals("dev")) {
-            httpSecurity.cors().and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
+            httpSecurity.cors().and()
                     // dont authenticate this particular request
-                    .authorizeRequests().antMatchers("/authenticate", "/signUp","/getProfile/*","/search/*","/testStatus","/testRobinhoodStatus","/testWebullStatus").permitAll().
+                    .authorizeRequests().antMatchers("/authenticate", "/signUp","/getProfile/*","/search/*","/testStatus","/testRobinhoodStatus","/testWebullStatus", "/discord/signUp", "/getActiveUsersInServer", "/discord/getUser", "/discord/webull/addAccount", "/discord/webull/sendMfa", "/discord/webull/syncWebull", "/discord/webull/updateMetrics","/discord/getGuildLeaderboard", "/discord/robinhood/addAccount", "/discord/robinhood/updateMetrics").permitAll().
                     // all other requests need to be authenticated
                             anyRequest().authenticated().and().
                     // make sure we use stateless session; session won't be used to
                     // store user's state.
                             exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable();
             // Add a filter to validate the tokens with every request
         } else {
             httpSecurity.requiresChannel().anyRequest().requiresSecure().and().cors().and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                     // dont authenticate this particular request
-                    .authorizeRequests().antMatchers("/authenticate", "/signUp","/getProfile/*","/search/*","/testStatus","/testRobinhoodStatus","/testWebullStatus", "/discord/signUp", "/getActiveUsersInServer", "/discord/getUser", "/discord/webull/addAccount", "/discord/webull/sendMfa", "/discord/webull/syncWebull").permitAll().
+                    .authorizeRequests().antMatchers("/authenticate", "/signUp","/getProfile/*","/search/*","/testStatus","/testRobinhoodStatus","/testWebullStatus", "/discord/signUp", "/getActiveUsersInServer", "/discord/getUser", "/discord/webull/addAccount", "/discord/webull/sendMfa", "/discord/webull/syncWebull", "/discord/webull/updateMetrics", "/discord/getGuildLeaderboard", "/discord/robinhood/addAccount", "/discord/robinhood/updateMetrics").permitAll().
                     // all other requests need to be authenticated
                             anyRequest().authenticated().and().
                     // make sure we use stateless session; session won't be used to
