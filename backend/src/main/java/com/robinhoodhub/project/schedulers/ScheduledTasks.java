@@ -42,26 +42,27 @@ public class ScheduledTasks {
 
     private static final SimpleDateFormat fateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    @Scheduled(cron = "0 0 */1 * * ?")//"0 0 */1 * * ?"
+    @Scheduled(cron = "0 */30 * * * ?")//"0 0 */1 * * ?"  "0 */30 * * * ?"
     public void updateHourlyFinhubAccounts() {
-        if(activeProfile.equals("dev")){
-            System.out.println("dev will not update");
-            return;
-        }
+        // if(activeProfile.equals("dev")){
+        //     System.out.println("dev will not update");
+        //     return;
+        // }
         System.out.println("Checking if discord finhub users should update");
         ZonedDateTime curTime = ZonedDateTime.now();
         curTime = curTime.withZoneSameInstant(ZoneOffset.of("-05:00"));
         Calendar cal = Calendar.getInstance();
-        cal.setTime(Date.from(curTime.toInstant()));
+        cal.setTime(java.util.Date.from(curTime.toInstant()));
         if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
             System.out.println("Wont update during weekend");
             return;
-        } else if(cal.get(Calendar.HOUR_OF_DAY)>20 || cal.get(Calendar.HOUR_OF_DAY)<14) {
+        } else if(cal.get(Calendar.HOUR_OF_DAY)>16 || cal.get(Calendar.HOUR_OF_DAY)<8) {
             System.out.println("Wont update after market hours");
             return;
-        }
+        } 
         System.out.println("Starting batch update process for finhub users at " + fateFormat.format(Date.from(curTime.toInstant())));
         // get list of accounts with active status
+        // TODO dont check if any broker is active, filter out brokers that are not active
         List<FinhubAccount> finhubAccounts = finhubAccountRepository.findAll().stream()
             .filter(account -> account.getBrokers().stream()
             .anyMatch(broker -> broker.getStatus().equals("active")))
@@ -89,10 +90,14 @@ public class ScheduledTasks {
                     broker.setBrokerTokenExpiration(null);
                     finhubAccountRepository.save(account);
                 } else {
-                    if (broker.getName().equals("robinhood"))
+                    if (broker.getName().equals("robinhood")){
+                        System.out.println("Robinhood account updated");
                         discordAccountService.robinhoodUpdatePerformanceHoldings(account.getDiscordId());
-                    else if (broker.getName().equals("webull"))
+                    }
+                    else if (broker.getName().equals("webull")) {
+                        System.out.println("Webull account updated");
                         discordAccountService.webullUpdatePerformanceHoldings(account.getDiscordId());
+                    }
                 }
 
             }
