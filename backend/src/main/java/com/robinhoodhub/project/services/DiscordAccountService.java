@@ -93,37 +93,6 @@ public class DiscordAccountService {
         }
     }
 
-    public ResponseEntity syncRobinhood(String discordId, DiscordModifyBrokerForm syncForm) {
-        try {
-            HttpResponse response = webullServiceRepository.getAccessToken(syncForm);
-            if(response.statusCode()!=200)
-                return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("webullRepositoryNon2xx");
-            /*
-            Map to response object and store in database
-             */
-            ObjectMapper objectMapper = new ObjectMapper();
-            WebullSyncResponse webullSyncResponse = objectMapper.readValue(response.body().toString(), WebullSyncResponse.class);
-
-            FinhubAccount finhubAccount = finhubAccountRepository.findByDiscordId(discordId);
-            Optional<Broker> webullBrokerOptional = finhubAccount.getBrokers().stream().
-                    filter(broker -> broker.getName().equals("webull"))
-                    .findFirst();
-            Broker webullBroker = webullBrokerOptional.orElse(null);
-            if (webullBroker==null) {
-                return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("noWebullAccount");
-            }
-            webullBroker.setBrokerAccessToken(aesUtil.encrypt(webullSyncResponse.getAccess_token(), s));
-            webullBroker.setBrokerAccountId(webullSyncResponse.getAccount_id());
-            webullBroker.setBrokerRefreshToken(webullSyncResponse.getRefresh_token());
-            webullBroker.setBrokerTokenExpiration(webullSyncResponse.getExpirationTime());
-            webullBroker.setStatus("active");
-            finhubAccountRepository.save(finhubAccount);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
-
     public ResponseEntity syncWebull(String discordId, WebullSyncForm syncForm) {
         try {
             HttpResponse response = webullServiceRepository.getAccessToken(syncForm);
