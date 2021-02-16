@@ -44,6 +44,7 @@ def login():
                                 store_session=False)
     response = {}
     response['access_token'] = login['access_token']
+    response['refresh_token'] = login['refresh_token']
     response['expires_in'] = login['expires_in']
     robinhood.logout()
     del login
