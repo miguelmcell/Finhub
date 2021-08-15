@@ -50,6 +50,35 @@ def login():
     del login
     return response, 200
 
+@bp.route('/refreshToken', methods=['POST'])
+def refresh_token():
+    if not ('username' in request.json and 'password' in request.json):
+        return 'Invalid Request', 400
+
+    if 'mfa_code' in request.json:
+        try:
+            login = robinhood.login(request.json['username'],
+                                request.json['password'],
+                                mfa_code=request.json['mfa_code'],
+                                store_session=False)
+        except Exception as e:
+            error_message = str(e)
+            if 'Please enter a valid code.' in error_message:
+                return 'Invalid code', 400
+            elif 'Unable to log in with provided credentials' in error_message:
+                return 'Unable to log in with provided credentials', 400
+    else:
+        login = robinhood.login(request.json['username'],
+                                request.json['password'],
+                                store_session=False)
+    response = {}
+    response['access_token'] = login['access_token']
+    response['refresh_token'] = login['refresh_token']
+    response['expires_in'] = login['expires_in']
+    robinhood.logout()
+    del login
+    return response, 200
+
 
 @bp.route('/getPerformances', methods=['GET'])
 def get_overall_performance():

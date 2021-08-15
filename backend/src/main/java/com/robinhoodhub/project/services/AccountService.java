@@ -320,6 +320,7 @@ public class AccountService {
             hubAccount.setRobinhoodAccessExp(curTime.plusSeconds((long) robinhoodSyncResponse.getExpires_in()));
             hubAccount.setRobinhoodStatus("Connected");
             hubAccount.setLastUpdate(curTime);
+            
             hubAccountRepository.save(hubAccount);
         } catch (Exception e) {
             return ResponseEntity.ok(HttpStatus.INTERNAL_SERVER_ERROR);

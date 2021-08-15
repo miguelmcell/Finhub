@@ -317,6 +317,7 @@ public class DiscordAccountService {
             robinhoodBroker.setBrokerAccessToken(aesUtil.encrypt(robinhoodSyncResponse.getAccess_token(), s));
             Instant curTime = Instant.now();
             robinhoodBroker.setBrokerTokenExpiration(curTime.plusSeconds((long) robinhoodSyncResponse.getExpires_in()).toString());
+            robinhoodBroker.setBrokerRefreshToken(robinhoodSyncResponse.getRefresh_token());
             robinhoodBroker.setStatus("active");
             finhubAccountRepository.save(finhubAccount);
         } catch (Exception e) {
