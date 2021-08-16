@@ -1,8 +1,11 @@
 import functools
 import datetime
 from os import error
+from requests.models import HTTPError
+import requests
 import robin_stocks as robinhood
 import calendar
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union, cast
 import time
 import sys
 from flask import (
@@ -11,15 +14,27 @@ from flask import (
 from flask_cors import cross_origin
 from werkzeug.security import check_password_hash, generate_password_hash
 
+CLIENT_ID: str = "c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS"
+"""Robinhood client id."""
+"""Headers used when performing requests with robinhood api."""
+# 8.5 days (you have a small window to refresh after this)
+# I would refresh the token proactively every day in a script
+EXPIRATION_TIME: int = 734000
+"""Default expiration time for requests."""
+
+TIMEOUT: int = 1
+"""Default timeout in seconds"""
+
 daily_performance_url = 'https://api.robinhood.com/historical/portfolio_v2/live/?account_number=' \
                         '{acc_number}&from={cur_time}&span=day'
 weekly_performance_url = 'https://api.robinhood.com/portfolios/historicals/{acc_number}/?interval=day&span=week'
 monthly_performance_url = 'https://api.robinhood.com/portfolios/historicals/{acc_number}/?interval=hour&span=month'
 overall_performance_url = 'https://api.robinhood.com/historical/portfolio_v2/live/?account_number=' \
                           '{acc_number}&from&span=all'
+oauth_url = 'https://api.robinhood.com/oauth2/token/'
 
-bp = Blueprint('robinhoodRepository', __name__, url_prefix='/robinhoodRepository')
 
+bp = Blueprint('robinhoodRepository', __name__, url_prefix='/robinhoodRepository')  
 
 @bp.route('/login', methods=['POST'])
 def login():
@@ -52,33 +67,29 @@ def login():
 
 @bp.route('/refreshToken', methods=['POST'])
 def refresh_token():
-    if not ('username' in request.json and 'password' in request.json):
+    if not (request.json is not None and 'refresh_token' in request.json):
         return 'Invalid Request', 400
-
-    if 'mfa_code' in request.json:
-        try:
-            login = robinhood.login(request.json['username'],
-                                request.json['password'],
-                                mfa_code=request.json['mfa_code'],
-                                store_session=False)
-        except Exception as e:
-            error_message = str(e)
-            if 'Please enter a valid code.' in error_message:
-                return 'Invalid code', 400
-            elif 'Unable to log in with provided credentials' in error_message:
-                return 'Unable to log in with provided credentials', 400
-    else:
-        login = robinhood.login(request.json['username'],
-                                request.json['password'],
-                                store_session=False)
+    
+    relogin_payload = {
+        "grant_type": "refresh_token",
+        "refresh_token": request.json['refresh_token'],
+        "scope": "internal",
+        "client_id": CLIENT_ID,
+        "expires_in": EXPIRATION_TIME,
+    }
+    
+    try:
+        answer = requests.post(oauth_url, data = relogin_payload)
+    except HTTPError:
+        return 'Failed to refresh token', 500
+    if answer.status_code != 200:
+        return 'Failed to refresh token', answer.status_code
     response = {}
-    response['access_token'] = login['access_token']
-    response['refresh_token'] = login['refresh_token']
-    response['expires_in'] = login['expires_in']
-    robinhood.logout()
-    del login
+    answer = answer.json()
+    response['access_token'] = answer['access_token']
+    response['refresh_token'] = answer['refresh_token']
+    response['expires_in'] = answer['expires_in']
     return response, 200
-
 
 @bp.route('/getPerformances', methods=['GET'])
 def get_overall_performance():

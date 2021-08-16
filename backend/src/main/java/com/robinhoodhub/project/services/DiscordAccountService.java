@@ -282,6 +282,48 @@ public class DiscordAccountService {
         }
     }
 
+    // update refresh/access token for robinhood account
+    public ResponseEntity refreshRobinhoodAccount(String discordId) {
+        try {
+            FinhubAccount finhubAccount = finhubAccountRepository.findByDiscordId(discordId);
+            Optional<Broker> robinhoodBrokerOptional = finhubAccount.getBrokers().stream().
+                    filter(broker -> broker.getName().equals("robinhood"))
+                    .findFirst();
+            Broker robinhoodBroker = robinhoodBrokerOptional.orElse(null);
+            if (robinhoodBroker==null) {
+                return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("noRobinhoodAccount");
+            }
+            if (robinhoodBroker.getBrokerAccessToken()==null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("robinhoodHasNotBeenSynced");
+            }
+
+
+
+
+            HttpResponse response = robinhoodServiceRepository.refreshToken(
+                RobinhoodRefreshTokenRquest.builder()
+                .refresh_token(robinhoodBroker.getBrokerRefreshToken())
+                .build()
+            );
+            if(response.statusCode()!=200) {
+                return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("refreshRobinhoodAccount: Unable to refresh token:"+response.body().toString());
+            }
+            /**
+             * Update DB entry with new access/refresh token
+             */
+            ObjectMapper objectMapper = new ObjectMapper();
+            RobinhoodRefreshTokenResponse robinhoodRefreshTokenResponse = objectMapper.readValue(response.body().toString(), RobinhoodRefreshTokenResponse.class);
+            robinhoodBroker.setBrokerAccessToken(robinhoodRefreshTokenResponse.getAccess_token());
+            robinhoodBroker.setBrokerRefreshToken(robinhoodRefreshTokenResponse.getRefresh_token());
+            Instant curTime = Instant.now();
+            robinhoodBroker.setBrokerTokenExpiration(curTime.plusSeconds((long) robinhoodRefreshTokenResponse.getExpires_in()).toString());
+            finhubAccountRepository.save(finhubAccount);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     // populate finhub account with access token for robinhood
     public ResponseEntity syncRobinhood(String discordId, RobinhoodSyncForm syncForm) {
         try {

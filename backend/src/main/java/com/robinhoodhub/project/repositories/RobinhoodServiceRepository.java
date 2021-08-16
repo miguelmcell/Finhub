@@ -1,5 +1,6 @@
 package com.robinhoodhub.project.repositories;
 
+import com.robinhoodhub.project.models.RobinhoodRefreshTokenRquest;
 import com.robinhoodhub.project.models.RobinhoodSyncForm;
 import com.robinhoodhub.project.models.RobinhoodSyncResponse;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,23 @@ public class RobinhoodServiceRepository {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://127.0.0.1:5000/robinhoodRepository/getPositions"))
                 .headers("content-type", "application/json","Authorization", "Bearer " + accessToken)
+                .build();
+
+        HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+        return response;
+    }
+
+    public HttpResponse<String> refreshToken(RobinhoodRefreshTokenRquest requestObject) throws Exception{
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(requestObject);
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://127.0.0.1:5000/robinhoodRepository/refreshToken"))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .header("content-type", "application/json")
                 .build();
 
         HttpResponse<String> response = client.send(request,
