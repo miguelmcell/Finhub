@@ -310,10 +310,50 @@ public class DiscordAccountService {
              */
             ObjectMapper objectMapper = new ObjectMapper();
             RobinhoodRefreshTokenResponse robinhoodRefreshTokenResponse = objectMapper.readValue(response.body().toString(), RobinhoodRefreshTokenResponse.class);
-            robinhoodBroker.setBrokerAccessToken(robinhoodRefreshTokenResponse.getAccess_token());
+            robinhoodBroker.setBrokerAccessToken(aesUtil.encrypt(robinhoodRefreshTokenResponse.getAccess_token(), s));
             robinhoodBroker.setBrokerRefreshToken(robinhoodRefreshTokenResponse.getRefresh_token());
             Instant curTime = Instant.now();
             robinhoodBroker.setBrokerTokenExpiration(curTime.plusSeconds((long) robinhoodRefreshTokenResponse.getExpires_in()).toString());
+            finhubAccountRepository.save(finhubAccount);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    // update refresh/access token for robinhood account
+    public ResponseEntity refreshWebullAccount(String discordId) {
+        try {
+            FinhubAccount finhubAccount = finhubAccountRepository.findByDiscordId(discordId);
+            Optional<Broker> webullBrokerOptional = finhubAccount.getBrokers().stream().
+                    filter(broker -> broker.getName().equals("webull"))
+                    .findFirst();
+            Broker webullBroker = webullBrokerOptional.orElse(null);
+            if (webullBroker==null) {
+                return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("noWebullAccount");
+            }
+            if (webullBroker.getBrokerAccessToken()==null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("webullBrokerHasNotBeenSynced");
+            }
+            String accessToken = aesUtil.decrypt(webullBroker.getBrokerAccessToken(), s);
+            HttpResponse response = webullServiceRepository.refreshToken(
+                WebullRefreshTokenRequest.builder()
+                .refreshToken(webullBroker.getBrokerRefreshToken())
+                .accessToken(accessToken)
+                .build()
+            );
+            if(response.statusCode()!=200) {
+                return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("refreshWebullAccount: Unable to refresh token:"+response.body().toString());
+            }
+            /**
+             * Update DB entry with new access/refresh token
+             */
+            ObjectMapper objectMapper = new ObjectMapper();
+            WebullRefreshTokenResponse webullRefreshTokenResponse = objectMapper.readValue(response.body().toString(), WebullRefreshTokenResponse.class);
+            webullBroker.setBrokerAccessToken(aesUtil.encrypt(webullRefreshTokenResponse.getAccess_token(), s));
+            webullBroker.setBrokerRefreshToken(webullRefreshTokenResponse.getRefreshToken());
+            Instant curTime = Instant.now();
+            webullBroker.setBrokerTokenExpiration(webullRefreshTokenResponse.getExpirationTime());
             finhubAccountRepository.save(finhubAccount);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

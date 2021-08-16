@@ -2,6 +2,7 @@ package com.robinhoodhub.project.repositories;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.robinhoodhub.project.models.RobinhoodSyncForm;
+import com.robinhoodhub.project.models.WebullRefreshTokenRequest;
 import com.robinhoodhub.project.models.WebullSyncForm;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +21,23 @@ public class WebullServiceRepository {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://127.0.0.1:5000/webullRepository/login"))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .header("content-type", "application/json")
+                .build();
+
+        HttpResponse<String> response = client.send(request,
+                HttpResponse.BodyHandlers.ofString());
+
+        return response;
+    }
+
+    public HttpResponse<String> refreshToken(WebullRefreshTokenRequest webullRefreshTokenRequest) throws Exception, IOException, InterruptedException {
+        var objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(webullRefreshTokenRequest);
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://127.0.0.1:5000/webullRepository/refresh"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .header("content-type", "application/json")
                 .build();

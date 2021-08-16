@@ -68,16 +68,27 @@ public class HubDiscordController {
         return accountService.syncRobinhood(requestForm.getDiscordId(), robinhoodSyncForm);
     }
 
-    // @RequestMapping(value="/discord/robinhood/refreshToken", method = RequestMethod.POST)
-    // public ResponseEntity refreshRobinhoodAccount(
-    //         @RequestBody DiscordModifyBrokerForm requestForm
-    // ) {
-    //     // Verify headers exist
-    //     if (requestForm.getDiscordId()==null)
-    //         return ResponseEntity.badRequest().build();
+    @RequestMapping(value="/discord/robinhood/refreshToken", method = RequestMethod.POST)
+    public ResponseEntity refreshRobinhoodAccount(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        // Verify headers exist
+        if (requestForm.getDiscordId()==null)
+            return ResponseEntity.badRequest().build();
 
-    //     return accountService.refreshRobinhoodAccount(requestForm.getDiscordId());
-    // }
+        return accountService.refreshRobinhoodAccount(requestForm.getDiscordId());
+    }
+
+    @RequestMapping(value="/discord/webull/refreshToken", method = RequestMethod.POST)
+    public ResponseEntity refreshWebullAccount(
+            @RequestBody DiscordModifyBrokerForm requestForm
+    ) {
+        // Verify headers exist
+        if (requestForm.getDiscordId()==null)
+            return ResponseEntity.badRequest().build();
+
+        return accountService.refreshWebullAccount(requestForm.getDiscordId());
+    }
 
     @RequestMapping(value="/discord/webull/sendMfa", method = RequestMethod.POST)
     public ResponseEntity sendWebullMfa(

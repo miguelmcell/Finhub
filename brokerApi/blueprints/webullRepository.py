@@ -53,8 +53,12 @@ def refresh():
     if not ('refreshToken' in request.json) and not ('accessToken' in request.json):
         return 'Invalid Request', 400
     data = {'refreshToken': request.json['refreshToken']}
-    refresh_url = refresh_url.format(refresh=request.json['refreshToken'])
-    refresh_response = requests.post(refresh_url, json=data, headers={'access_token': request.json['accessToken']})
+    headers = {}
+    headers['t_time'] = str(round(time.time() * 1000))
+    headers['access_token'] = request.json['accessToken']
+    local_refresh_url = 'https://userapi.webull.com/api/passport/refreshToken?refreshToken={refresh}'
+    refresh_url = local_refresh_url.format(refresh=request.json['refreshToken'])
+    refresh_response = requests.post(refresh_url, json=data, headers=headers)
     refresh_response = refresh_response.json()
     print('refresh response:', refresh_response)
     response = {'access_token': refresh_response['accessToken'], 'refreshToken': refresh_response['refreshToken'],

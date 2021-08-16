@@ -73,19 +73,24 @@ public class ScheduledTasks {
                 if (curDateTime.isAfter(expirationTime)) {
                     System.out.println("Session for " + broker.getName() + " has expired!");
                     boolean setToInactive = true;
-                    if (broker.getName().equals("robinhood")) {
-                        System.out.println(broker.getName() + " will attempt to refresh");
-                        ResponseEntity response = discordAccountService.refreshRobinhoodAccount(account.getDiscordId());
-                        if (response.getStatusCode().value()==200) {
-                            setToInactive = false;
-                            if (broker.getName().equals("robinhood")){
-                                discordAccountService.robinhoodUpdatePerformanceHoldings(account.getDiscordId());
-                                System.out.println("Robinhood account updated");
-                            }
-                            else if (broker.getName().equals("webull")) {
-                                discordAccountService.webullUpdatePerformanceHoldings(account.getDiscordId());
-                                System.out.println("Webull account updated");
-                            }
+                    System.out.println(broker.getName() + " will attempt to refresh");
+                    ResponseEntity response;
+                    if (broker.getName().equals("webull")) {
+                        response = discordAccountService.refreshWebullAccount(account.getDiscordId());
+                    } else if (broker.getName().equals("robinhood")) {
+                        response = discordAccountService.refreshRobinhoodAccount(account.getDiscordId());
+                    } else {
+                        response = null;
+                    }
+                    if (response != null && response.getStatusCode().value()==200) {
+                        setToInactive = false;
+                        if (broker.getName().equals("robinhood")){
+                            discordAccountService.robinhoodUpdatePerformanceHoldings(account.getDiscordId());
+                            System.out.println("Robinhood account updated");
+                        }
+                        else if (broker.getName().equals("webull")) {
+                            discordAccountService.webullUpdatePerformanceHoldings(account.getDiscordId());
+                            System.out.println("Webull account updated");
                         }
                     }
                     if (setToInactive) {
