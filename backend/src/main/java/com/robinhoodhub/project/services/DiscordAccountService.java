@@ -297,9 +297,6 @@ public class DiscordAccountService {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("robinhoodHasNotBeenSynced");
             }
 
-
-
-
             HttpResponse response = robinhoodServiceRepository.refreshToken(
                 RobinhoodRefreshTokenRquest.builder()
                 .refresh_token(robinhoodBroker.getBrokerRefreshToken())

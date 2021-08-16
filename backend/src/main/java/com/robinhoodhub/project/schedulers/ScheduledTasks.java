@@ -10,6 +10,7 @@ import com.robinhoodhub.project.services.DiscordAccountService;
 import com.robinhoodhub.project.utils.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
@@ -68,13 +69,32 @@ public class ScheduledTasks {
                     return;
                 }
                 
-                // set broker to inactive if token expired
+                // set broker to inactive if token expired or refresh if broker is supported
                 if (curDateTime.isAfter(expirationTime)) {
-                    System.out.println("Session for " + broker.getName() + "has expired");
-                    broker.setStatus("inactive");
-                    broker.setBrokerAccessToken(null);
-                    broker.setBrokerTokenExpiration(null);
-                    finhubAccountRepository.save(account);
+                    System.out.println("Session for " + broker.getName() + " has expired!");
+                    boolean setToInactive = true;
+                    if (broker.getName().equals("robinhood")) {
+                        System.out.println(broker.getName() + " will attempt to refresh");
+                        ResponseEntity response = discordAccountService.refreshRobinhoodAccount(account.getDiscordId());
+                        if (response.getStatusCode().value()==200) {
+                            setToInactive = false;
+                            if (broker.getName().equals("robinhood")){
+                                discordAccountService.robinhoodUpdatePerformanceHoldings(account.getDiscordId());
+                                System.out.println("Robinhood account updated");
+                            }
+                            else if (broker.getName().equals("webull")) {
+                                discordAccountService.webullUpdatePerformanceHoldings(account.getDiscordId());
+                                System.out.println("Webull account updated");
+                            }
+                        }
+                    }
+                    if (setToInactive) {
+                        System.out.println(broker.getName() + " will be set to inactive");
+                        broker.setStatus("inactive");
+                        broker.setBrokerAccessToken(null);
+                        broker.setBrokerTokenExpiration(null);
+                        finhubAccountRepository.save(account);
+                    }
                 } else {
                     if (broker.getName().equals("robinhood")){
                         discordAccountService.robinhoodUpdatePerformanceHoldings(account.getDiscordId());
